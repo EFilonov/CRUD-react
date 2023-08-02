@@ -14,10 +14,11 @@ class App extends Component {
     super(props)
     this.state = {
       data : [
-        {name: "Zhek" ,salary: 4500, increase: false, approved: true, id: 1},
-        {name: "Kolya" ,salary: 1500, increase: true, approved: false, id: 2},
-        {name: "Slava" ,salary: 2500, increase: false, approved: false, id: 3}
-        ]
+        {name: "Zhek" ,salary: 100500, increase: false, approved: false, id: 1},
+        {name: "Ksyushmel" ,salary: 2500, increase: false, approved: false, id: 2},
+        {name: "Slava" ,salary: 1500, increase: false, approved: false, id: 3}
+        ],
+        searchMask:''
       } 
     this.getMaxId = () => {
       const idArr = this.state.data.map(item => item.id);
@@ -32,7 +33,6 @@ class App extends Component {
   }
 
   addPerson = (name, salary) =>{
-    console.log(this.getMaxId());
     const newItem = [{
       name, 
       salary,
@@ -51,15 +51,14 @@ class App extends Component {
   }
 
   onTogglePromotion = (id) => {
-    this.setState(({data}) => ({
-      data :data.map(item => {
+    this.setState(({data}) => {
+      return {data :data.map(item => {
         if (item.id === id) {
           return {...item, increase: !item.increase}
         }
         return item
-
-       })
-    }))
+      })}
+    })
   }
 
   onToggleRise = (id) => {
@@ -69,7 +68,6 @@ class App extends Component {
           return {...item, approved: !item.approved}
         }
         return item
-
        })
     }))
   }
@@ -83,25 +81,43 @@ class App extends Component {
     return promotedArr.length
   }
 
+  onSearch = (items, searchMask) => {
+    if (searchMask.length === 0) {
+      return items
+  }
+
+    return items.filter(item => {
+      return item.name.indexOf(searchMask) !== -1
+  })
+}
+onUpdeteSearch = (searchMask) =>{
+  this.setState({searchMask})
+} 
 
   render () {
+    const {data, searchMask} = this.state;
+    const visibleByMask = this.onSearch(data, searchMask);
+
     return (
       <div className="app">
+
           <AppInfo
-          emploeeCount = {this.getEmploeeCount}
-          promotedCount = {this.getPromotedCount}/>
+            emploeeCount = {this.getEmploeeCount}
+            promotedCount = {this.getPromotedCount}/>
   
           <div className="search-panel">
-              <SearchPanel/>
-              <AppFilter/>
+            <SearchPanel
+            onUpdeteSearch = {this.onUpdeteSearch} />
+
+            <AppFilter/>
           </div>
           
           <EmployeesList 
-            data={this.state.data}
+            data={visibleByMask}
             onDelete = {this.deleteItem}
             onToggleRise = {this.onToggleRise}
-            onTogglePromotion = {this.onTogglePromotion}
-            />
+            onTogglePromotion = {this.onTogglePromotion} />
+          
           <EmployeesAddForm onAdd = {this.addPerson} />
       </div>
     );
