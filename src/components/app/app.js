@@ -14,11 +14,12 @@ class App extends Component {
     super(props)
     this.state = {
       data : [
-        {name: "Zhek" ,salary: 100500, increase: false, approved: false, id: 1},
-        {name: "Ksyushmel" ,salary: 2500, increase: false, approved: false, id: 2},
-        {name: "Slava" ,salary: 1500, increase: false, approved: false, id: 3}
+        {name: "Zhek" ,salary: 100500, increase: true, approved: false, id: 1},
+        {name: "Ksyushmel" ,salary: 500, increase: false, approved: false, id: 2},
+        {name: "Slava" ,salary: 1500, increase: true, approved: false, id: 3}
         ],
-        searchMask:''
+        searchMask:'',
+        filter:'all'
       } 
     this.getMaxId = () => {
       const idArr = this.state.data.map(item => item.id);
@@ -29,7 +30,7 @@ class App extends Component {
   deleteItem = (id) => {
     this.setState(({data}) => { 
       return {data: data.filter(item => item.id !== id)}
-    }) 
+    })  
   }
 
   addPerson = (name, salary) =>{
@@ -43,9 +44,7 @@ class App extends Component {
     if (name&&salary) {
       this.setState(({data}) => {
           const newArr = [...data, ...newItem];
-          return {
-              data: newArr
-          }
+          return {data: newArr}
       });
     }
   }
@@ -92,11 +91,23 @@ class App extends Component {
 }
 onUpdeteSearch = (searchMask) =>{
   this.setState({searchMask})
-} 
+}
+
+swithFilter = (items, filter) => { 
+  switch (filter) {
+    case 'increase': return items.filter(item => item.increase);
+    case 'more1000': return items.filter(item => item.salary > 1000);
+    default: return items
+  };
+}
+
+onFilterSelect = (filter) => {
+  this.setState({filter})
+}
 
   render () {
-    const {data, searchMask} = this.state;
-    const visibleByMask = this.onSearch(data, searchMask);
+    const {data, searchMask, filter} = this.state;
+    const visibleByMask = this.swithFilter(this.onSearch(data, searchMask), filter);
 
     return (
       <div className="app">
@@ -107,9 +118,11 @@ onUpdeteSearch = (searchMask) =>{
   
           <div className="search-panel">
             <SearchPanel
-            onUpdeteSearch = {this.onUpdeteSearch} />
-
-            <AppFilter/>
+              onUpdeteSearch = {this.onUpdeteSearch} />
+            <AppFilter
+               filter = {filter}
+               onFilterSelect = {this.onFilterSelect}
+              />
           </div>
           
           <EmployeesList 
