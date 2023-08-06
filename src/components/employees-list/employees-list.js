@@ -1,12 +1,22 @@
+import { Component } from "react";
 import EmployeesListItem from "../employees-list-item/employees-list-item";
 
 import './employees-list.css';
 
 
 
-const EmployeesList = ({data, onDelete, onTogglePromotion, onToggleRise}) => {
+class EmployeesList extends Component {
+    constructor (props) {
+        super(props)
+        this.state = {
+        }
+    }
+   
+    
 
-    const emploeesItems = data.map(item =>{
+    render () {
+    const {data, onDelete, onTogglePromotion, onToggleRise, onChangeSalary, onEditSalary} = this.props;
+    const emploeesItems = data.map(item =>{ 
         const {id, ...emploeeData} = item;
         return(
         //    <EmployeesListItem name={item.name} salary={item.salary} increase={item.increase}/> 
@@ -15,7 +25,11 @@ const EmployeesList = ({data, onDelete, onTogglePromotion, onToggleRise}) => {
              {...emploeeData}
              onDelete = {() => {onDelete(id)}}
              onTogglePromotion = {() => onTogglePromotion(id)}
-             onToggleRise = {() => onToggleRise(id)} /> 
+             onToggleRise = {() => onToggleRise(id)} 
+             onChangeSalary = {() => onChangeSalary(id)}
+             dataId = {id}
+             onEditSalary = {onEditSalary}
+             /> 
         )
         
     })
@@ -25,6 +39,7 @@ const EmployeesList = ({data, onDelete, onTogglePromotion, onToggleRise}) => {
             {emploeesItems}
         </ul>
     )
+    }
     
 }
 

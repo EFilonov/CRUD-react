@@ -14,12 +14,14 @@ class App extends Component {
     super(props)
     this.state = {
       data : [
-        {name: "Zhek" ,salary: 100500, increase: true, approved: false, id: 1},
-        {name: "Ksyushmel" ,salary: 500, increase: false, approved: false, id: 2},
-        {name: "Slava" ,salary: 1500, increase: true, approved: false, id: 3}
+        {name: "Zhek" ,salary: '100500', increase: true, approved: false, id: 1},
+        {name: "Ksyushmel" ,salary: '500', increase: false, approved: false, id: 2},
+        {name: "Slava" ,salary: '1500', increase: true, approved: false, id: 3}
         ],
         searchMask:'',
-        filter:'all'
+        filter:'all',
+        newSalary: '',
+        newSalaryId: ''
       } 
     this.getMaxId = () => {
       const idArr = this.state.data.map(item => item.id);
@@ -105,10 +107,38 @@ onFilterSelect = (filter) => {
   this.setState({filter})
 }
 
+// onEditSalary = (e) =>{
+//   e.preventDefault();
+//   const newSalary = e.target.value.replace(/\D/g,'')
+//   const newSalaryId = e.target.dataset.id
+//   const arrWithNewSalary = this.state.data.map(item =>{
+//     if (item.id === newSalaryId) {
+//       return {...item, salary: newSalary}
+//     }
+    
+//     return item
+//   })
+  
+//   console.log(arrWithNewSalary);
+// }
+
+onEditSalary = (newSalaryId, newSalary) => { 
+  this.setState(({data}) => {
+    return {data :data.map(item => {
+      if (item.id === +newSalaryId) {
+        return {...item, salary: newSalary}
+      }
+      return item
+    })}
+  })
+   
+}  
+ 
+
   render () {
     const {data, searchMask, filter} = this.state;
     const visibleByMask = this.swithFilter(this.onSearch(data, searchMask), filter);
-
+    
     return (
       <div className="app">
 
@@ -129,7 +159,8 @@ onFilterSelect = (filter) => {
             data={visibleByMask}
             onDelete = {this.deleteItem}
             onToggleRise = {this.onToggleRise}
-            onTogglePromotion = {this.onTogglePromotion} />
+            onTogglePromotion = {this.onTogglePromotion}
+            onEditSalary = {this.onEditSalary} />
           
           <EmployeesAddForm onAdd = {this.addPerson} />
       </div>
